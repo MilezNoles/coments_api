@@ -15,15 +15,23 @@ class PostCommentSerializer(ModelSerializer):
 
 class PostSerializer(ModelSerializer):
     replies = SerializerMethodField()
+    slug = SerializerMethodField(read_only=True)
+
+    def get_slug(self, obj):
+        return obj.slug
 
     def get_replies(self, obj):
         node_comment_ids = []
         q_for_node_comments = Comment.objects.filter(post_id=obj.id, reply_to=None)
-        for el in q_for_node_comments:
-            node_comment_ids.append(el.id)
-        recursive_q = path_to_children(tuple(node_comment_ids))
-        q_depth_limit3 = [x for x in list(recursive_q) if x.path_len < 4]
-        serializer = PostCommentSerializer(q_depth_limit3, many=True, context=self.context)
+
+        if q_for_node_comments:
+            for el in q_for_node_comments:
+                node_comment_ids.append(el.id)
+            recursive_q = path_to_children(tuple(node_comment_ids))
+            q_depth_limit3 = [x for x in list(recursive_q) if x.path_len < 4]
+            serializer = PostCommentSerializer(q_depth_limit3, many=True, context=self.context)
+        else:
+            serializer = PostCommentSerializer(q_for_node_comments, many=True)
         return serializer.data
 
     class Meta:
