@@ -10,7 +10,7 @@ SECRET_KEY = 'django-insecure-s$pyi*a*)-%^)3u!5)noswvf2(cajfq401)##oho4gi1bt5z4s
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost","127.0.0.1"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -56,11 +56,10 @@ WSGI_APPLICATION = 'blog.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '369963',
-        'HOST': 'localhost',
-        'PORT': 5432,
+        'HOST': os.environ.get('DB_HOST',"localhost"),
+        'NAME': os.environ.get('DB_NAME',"postgres"),
+        'USER': os.environ.get('DB_USER',"postgres"),
+        'PASSWORD': os.environ.get('DB_PASS',"369963"),
     }
 }
 
